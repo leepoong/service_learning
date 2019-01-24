@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>search</title>
+    <link href="/css/search.css" rel="stylesheet" type="text/css">
+    <script src="/js/search.js" type="text/javascript" rel="script"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(document).click(function () {
+                // $("#div4").css("color", "#CCCCCC");
+                $("#div4").fadeTo(1500, 0.1)
+            });
+            var beginTime = $("#input1");
+            var endTime = $("#input2");
+            beginTime.val(getNowTime(new Date(new Date() - 24 * 60 * 60 * 1000)));
+            endTime.val(getNowTime(new Date()));
+            $("#input4").change(function () {
+                $("#input5")[0].removeAttribute("disabled");
+                var v = $("#input4").val();
+                if (v === "rowkey") {
+                    $("#input5").val("");
+                    $("#input5")[0].type = "text";
+                } else if (v === "teg_chann_id") {
+                    $("#msg")[0].innerHTML = "";
+                    $("#input5")[0].type = "number";
+                } else {
+                    $("#msg")[0].innerHTML = "";
+                    $("#input5").val("");
+                    $("#input5")[0].setAttribute("disabled", "disabled");
+                }
+            });
+            $("#submit").click(function () {
+                var tr1 = document.getElementById("tr1");
+                document.getElementById("t1").innerHTML = "";
+                document.getElementById("t1").appendChild(tr1);
+                var beginTime = $("#input1").val();
+                var endTime = $("#input2").val();
+                var granularity = $("#input3").val();
+                var limitCnt = $("#input6").val();
+
+                var filterName = $("#input4").val();
+                var filterValue = $("#input5").val();
+                var filter;
+                var msg = $("#msg");
+                if (filterName === "rowkey") {
+                    if (filterValue.length !== 16 && filterValue !== "") {
+                        msg.text("rowkey must be 16 char !");
+                        $("#div2").css("display", "none");
+                        $("#div3").css("display", "block");
+                        $("#div4").css("color", "#CCCCCC");
+                        return
+                    }
+                    filter = {
+                        filterName: "rowkey",
+                        filterValue: filterValue
+                    }
+                } else if (filterName === "teg_chann_id") {
+                    filter = {
+                        filterName: "teg_chann_id",
+                        filterValue: filterValue
+                    }
+                }
+                if (filterValue === "" || filterValue === undefined || filterValue == null) {
+                    filter = undefined
+                }
+
+                var accusation_cnt_low = $("#accusation_cnt_low").val();
+                var accusation_cnt_high = $("#accusation_cnt_high").val();
+                var article_click_low = $("#article_click_low").val();
+                var article_click_high = $("#article_click_high").val();
+                var feeds_click_low = $("#feeds_click_low").val();
+                var feeds_click_high = $("#feeds_click_high").val();
+                var comment_cnt_low = $("#comment_cnt_low").val();
+                var comment_cnt_high = $("#comment_cnt_high").val();
+                var rangeFilters = [];
+                f1("accusation_cnt", accusation_cnt_low, accusation_cnt_high, rangeFilters);
+                f1("article_click", article_click_low, article_click_high, rangeFilters);
+                f1("feeds_click", feeds_click_low, feeds_click_high, rangeFilters);
+                f1("comment_cnt", comment_cnt_low, comment_cnt_high, rangeFilters);
+                if (rangeFilters.length === 0) {
+                    rangeFilters = undefined;
+                }
+
+                var data = {
+                        beginTime: beginTime,
+                        endTime: endTime,
+                        granularity: granularity,
+                        filter: filter,
+                        rangeFilters: rangeFilters,
+                        limitCnt: limitCnt
+                    }
+                ;
+
+                var startTime = new Date();
+                $.ajax({
+                    url: "/simulate",
+                    type: "post",
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (rs) {
+                        $("#div3").css("display", "none");
+                        $("#div2").css("display", "block");
+                        var v1 = JSON.stringify(rs);
+                        var v2 = JSON.parse(v1);
+                        var v3 = v2.data;
+                        $.each(v3, function (index, v) {
+                            var rowkey = v.rowkey;
+                            var ips = v.ips;
+                            $.each(v.item, function (i, v4) {
+                                var tr = $("<tr></tr>");
+                                tr.append("<td>" + rowkey + "</td>");
+                                tr.append("<td>" + ips + "</td>");
+                                tr.append("<td>" + i + "</td>");
+                                tr.append("<td>" + v4["accusation_cnt"] + "</td>");
+                                tr.append("<td>" + v4["article_click"] + "</td>");
+                                tr.append("<td>" + v4["biu_cnt"] + "</td>");
+                                tr.append("<td>" + v4["comment_cnt"] + "</td>");
+                                tr.append("<td>" + v4["exp_cnt"] + "</td>");
+                                tr.append("<td>" + v4["feeds_click"] + "</td>");
+                                tr.append("<td>" + v4["feeds_expose"] + "</td>");
+                                tr.append("<td>" + v4["praise_cnt"] + "</td>");
+                                tr.append("<td>" + v4["pv"] + "</td>");
+                                tr.append("<td>" + v4["reading_cnt"] + "</td>");
+                                tr.append("<td>" + v4["reading_rate"] + "</td>");
+                                tr.append("<td>" + v4["reading_rate_count"] + "</td>");
+                                tr.append("<td>" + v4["reading_tm"] + "</td>");
+                                tr.append("<td>" + v4["share_cnt"] + "</td>");
+                                $("#t1").append(tr)
+                            })
+                        });
+                        $("#msg")[0].innerHTML = ""
+                    },
+                    error: function () {
+                        alert("error occurred");
+                        $("#msg")[0].innerHTML = "";
+                        var div3 = $("#div3");
+                        div3.css("display", "block");
+                        $("#div4").css("color", "#CCCCCC");
+                    }
+                });
+                var finishTime = new Date();
+                var t1 = "2019/01/20 03:20:20";
+                var t2 = "2019/01/21 03:20:20";
+                console.log(new Date(t2).getTime() - new Date(t1).getTime());
+            })
+        });
+
+        function f1(name, obj, obj2, array) {
+            if (obj !== "" && obj !== undefined && obj != null && obj2 !== "" && obj2 !== undefined && obj2 != null) {
+                var v = {
+                    filterName: name,
+                    lowValue: obj,
+                    highValue: obj2
+                };
+                array.push(v);
+            }
+        }
+
+        function getNowTime(now) {
+            var year = now.getFullYear();
+            var month = now.getMonth() + 1;
+            var day = now.getDate();
+            var hour = now.getHours();
+            var minute = now.getMinutes();
+            if (month < 10) {
+                month = "0" + month;
+            }
+            if (day < 10) {
+                day = "0" + day;
+            }
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            if (minute < 10) {
+                minute = "0" + minute;
+            }
+            return year + month + day + hour + minute;
+        }
+    </script>
+</head>
+<body>
+<div id="div0">
+    <div id="div6">
+        <div style="position: absolute;width: 5%;height: 80%;text-align: center;padding: 10px">
+            <p style="font-size: 20px;color: white;">数据平台</p>
+        </div>
+        <div style="position: absolute;width: 20%;height:100%;left: 80%;"></div>
+    </div>
+    <div id="div1">
+        <form style="position: absolute;width: 100%;height: 95%">
+            <table class="t2" cellpadding="1" cellspacing="1" align="center">
+                <tr>
+                    <td colspan="2">Required</td>
+                </tr>
+                <tr>
+                    <td class="td1"><label for="input1">beginTime:</label></td>
+                    <td class="c2"><input type="text" id="input1" name="beginTime"></td>
+                </tr>
+                <tr>
+                    <td class="td1"><label for="input2">endTime:</label></td>
+                    <td class="c2"><input type="text" id="input2" name="endTime"></td>
+                </tr>
+                <tr>
+                    <td class="td1"><label for="input3">granularity:</label></td>
+                    <td class="c2">
+                        <select id="input3">
+                            <option value="2">hour</option>
+                            <option value="4">all</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td1"><label for="input6">limitCnt:</label></td>
+                    <td class="c2"><input type="number" id="input6" name="limitCnt" value="100"></td>
+                </tr>
+
+
+            </table>
+            <table class="t3" cellspacing="1" cellpadding="1" align="center">
+                <tr>
+                    <td colspan="2">Filter (optional)</td>
+                </tr>
+                <tr>
+                    <td class="td1"><label for="input4">filterName:</label></td>
+                    <td class="c2">
+                        <select id="input4">
+                            <option value="none">未选择</option>
+                            <option value="rowkey">rowkey</option>
+                            <option value="teg_chann_id">teg_chann_id</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td1"><label for="input5">filterValue:</label></td>
+                    <td class="c2"><input type="text" id="input5" name="filterValue" disabled="disabled">
+                        <p id="msg"></p></td>
+
+                </tr>
+            </table>
+            <table class="t4" cellspacing="1" cellpadding="1" align="center">
+                <tr>
+                    <td colspan="2">RangeFilter (optional)</td>
+                </tr>
+                <tr class="tr8">
+                    <td class="td1">accusation_cnt:</td>
+                    <td><input type="number" name="accusation_cnt_low" id="accusation_cnt_low"> - <input type="number"
+                                                                                                         name="accusation_cnt_high"
+                                                                                                         id="accusation_cnt_high">
+                    </td>
+                </tr>
+                <tr class="tr8">
+                    <td class="td1">article_click:</td>
+                    <td><input type="number" name="article_click_low" id="article_click_low"> - <input type="number"
+                                                                                                       name="article_click_high"
+                                                                                                       id="article_click_high">
+                    </td>
+                </tr>
+                <tr class="tr8">
+                    <td class="td1">feeds_click:</td>
+                    <td><input type="number" name="feeds_click_low" id="feeds_click_low"> - <input type="number"
+                                                                                                   name="feeds_click_high"
+                                                                                                   id="feeds_click_high">
+                    </td>
+                </tr>
+                <tr class="tr8">
+                    <td class="td1">comment_cnt:</td>
+                    <td><input type="number" name="comment_cnt_low" id="comment_cnt_low"> - <input type="number"
+                                                                                                   name="comment_cnt_high"
+                                                                                                   id="comment_cnt_high">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div id="div5">
+            <button id="submit">
+                launch
+            </button>
+        </div>
+    </div>
+    <div id="div2">
+        <table align="center" id="t1">
+            <tr id="tr1">
+                <th>rowkey</th>
+                <th>ip</th>
+                <th>time</th>
+                <th>accusation_cnt</th>
+                <th>article_click</th>
+                <th>biu_cnt</th>
+                <th>comment_cnt</th>
+                <th>exp_cnt</th>
+                <th>feeds_click</th>
+                <th>feeds_expose</th>
+                <th>praise_cnt</th>
+                <th>pv</th>
+                <th>reading_cnt</th>
+                <th>reading_rate</th>
+                <th>reading_rate_count</th>
+                <th>reading_tm</th>
+                <th>share_cnt</th>
+            </tr>
+        </table>
+    </div>
+    <div id="div3">
+        <div id="div4">大道至简</div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test3</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $("#div1").click(function () {
+                setTimeout(function () {
+                    $("#div1").hide(2000);
+                    $("#div1").show(2000)
+                }, 2000);
+            })
+        })
+    </script>
+</head>
+<body>
+<div id="div1" style="width: 200px;height: 200px;background: #4CAF50"></div>
+<div style="width: 200px;height: 200px;background: #555555"></div>
+</body>
+</html>

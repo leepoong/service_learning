@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_HOME" value="log"/>
+
+    <!-- 输出到控制台 -->
+    <appender name="CONSOLE_REF" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 输出的格式 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%highlight(%5level)] [ %yellow(%t) ] [%white(%r)] %c{15} %boldGreen(-->) %m%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到文件-->
+    <appender name="DEBUG_REF" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/debug.log</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="INFO_REF" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <!--<fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}</fileNamePattern>-->
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/info.log</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR_REF" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/error.log</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--    <appender name="ERROR_REF" class="ch.qos.logback.core.FileAppender">
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>WARN</level>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>ERROR</level>
+            </filter>
+            <file>${LOG_HOME}}/error.log</file>
+            <append>false</append>
+            <encoder>
+                <pattern>%d [%thread] [%-5level] %logger{0} - %msg%n</pattern>
+            </encoder>
+        </appender>-->
+
+
+    <!--    <logger name="com.tencent.kd.service.ScheduledTask" level="debug" additivity="false">
+            <appender-ref ref="stdout"/>
+        </logger>-->
+    <logger name="com.tencent.kd.dao.master.HistoryDataDao" level="DEBUG">
+        <appender-ref ref="CONSOLE_REF"/>
+        <appender-ref ref="DEBUG_REF"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE_REF"/>
+        <appender-ref ref="INFO_REF"/>
+        <appender-ref ref="ERROR_REF"/>
+    </root>
+</configuration>

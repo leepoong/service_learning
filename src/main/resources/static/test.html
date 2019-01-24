@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#b1").click(function () {
+                $("div>p").hide();
+            });
+            $(":focus").click(function () {
+                $(":focus").hide()
+            })
+        })
+    </script>
+    <style>
+        button {
+            font-size: 16px;
+            background-color: white;
+            color: black;
+            padding: 16px 32px;
+            margin: 10px;
+            cursor: pointer;
+            border: 2px solid #4CAF50;
+            transition-duration: 1s;
+        }
+
+        button:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <p>hello</p>
+    <button id="b1" style="font-size: 10px">click</button>
+    <div id="div1" style="width: 100px;height: 100px;background: yellow;display: none"></div>
+    <div id="div2" style="width: 100px;height: 100px;background: red;display: none"></div>
+    <div id="div3" style="width:100px;height: 100px;background: green;display: none;"></div>
+    <span><p>sanshang</p></span>
+    <p>world</p>
+</div>
+<p>hi</p>
+<button>click1</button>
+<button>click2</button>
+<br>
+<button>click3</button>
+<button>click4</button>
+</body>
+</html>

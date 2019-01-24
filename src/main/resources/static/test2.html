@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test2</title>
+    <script src="/js/echarts.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var main = $("#main");
+            main.css("background", "white");
+            runMyChart();
+
+            $("*").mouseenter(function () {
+                $(":hover").css("background", "black")
+            });
+
+            $("*").mouseleave(function () {
+                $(":hover").css("background", "white")
+            });
+
+            function runMyChart() {
+                var mychart = echarts.init($("#main")[0]);
+                var option = {
+                    title: {
+                        text: 'ECharts 入门示例'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['销量']
+                    },
+                    xAxis: {
+                        data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '销量',
+                        type: 'bar',
+                        data: [5, 20, 36, 10, 10, 20]
+                    }]
+                };
+                mychart.setOption(option)
+            }
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        #div1 {
+            position: absolute;
+            width: 100%;
+            height: 10%;
+            background: #91bd09;
+        }
+
+        #div2 {
+            position: absolute;
+            width: 20%;
+            height: 90%;
+            top: 10%;
+            background: #007d9a;
+        }
+
+        #main {
+            position: absolute;
+            width: 80%;
+            height: 90%;
+            left: 20%;
+            top: 10%;
+            background: #555555;
+        }
+    </style>
+</head>
+<body>
+<div id="div1">
+
+</div>
+<div id="div2">
+
+</div>
+<div id="main">
+</div>
+</body>
+</html>
